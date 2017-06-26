@@ -104,5 +104,12 @@
       <artifactId>jsoup</artifactId>
       <version>1.10.2</version>
     </dependency>
+
+    <!--CAFFEINE-->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+      <version>2.5.0</version>
+    </dependency>
   </dependencies>
 </project>
