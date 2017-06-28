@@ -8,7 +8,6 @@ import me.ialistannen.isbnlookuplib.book.Book;
 import me.ialistannen.isbnlookuplib.book.StandardBookDataKeys;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.util.Pair;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class DetailPageScraperTest {
@@ -22,13 +21,13 @@ class DetailPageScraperTest {
     Book book = pageScraper
         .scrape("https://www.amazon.de/Drachenreiter-Cornelia-Funke/dp/3791504541");
 
-    assertEquals(book.getData(StandardBookDataKeys.TITLE), "Drachenreiter");
-    assertEquals(book.getData(StandardBookDataKeys.LANGUAGE), "Deutsch");
-    assertEquals(book.getData(StandardBookDataKeys.PAGE_COUNT), Integer.valueOf(448));
-    assertEquals(book.getData(StandardBookDataKeys.PUBLISHER), "Dressler Verlag");
+    assertEquals("Drachenreiter", book.getData(StandardBookDataKeys.TITLE));
+    assertEquals("Deutsch", book.getData(StandardBookDataKeys.LANGUAGE));
+    assertEquals(Integer.valueOf(448), book.getData(StandardBookDataKeys.PAGE_COUNT));
+    assertEquals("Dressler Verlag", book.getData(StandardBookDataKeys.PUBLISHER));
     assertEquals(
-        book.getData(StandardBookDataKeys.AUTHORS),
-        Collections.singletonList(new Pair<>("Cornelia Funke", "Autor, Illustrator"))
+        Collections.singletonList(new Pair<>("Cornelia Funke", "Autor, Illustrator")),
+        book.getData(StandardBookDataKeys.AUTHORS)
     );
   }
 
@@ -37,31 +36,31 @@ class DetailPageScraperTest {
     Book book = pageScraper
         .scrape("https://www.amazon.de/Hitchhikers-Guide-Galaxy-Douglas-Adams/dp/0345391802/");
 
-    assertEquals(book.getData(StandardBookDataKeys.TITLE), "The Hitchhiker's Guide to the Galaxy");
-    assertEquals(book.getData(StandardBookDataKeys.LANGUAGE), "Englisch");
-    assertEquals(book.getData(StandardBookDataKeys.PAGE_COUNT), Integer.valueOf(216));
-    assertEquals(book.getData(StandardBookDataKeys.PUBLISHER), "Del Rey");
+    assertEquals("The Hitchhiker's Guide to the Galaxy", book.getData(StandardBookDataKeys.TITLE));
+    assertEquals("Englisch", book.getData(StandardBookDataKeys.LANGUAGE));
+    assertEquals(Integer.valueOf(216), book.getData(StandardBookDataKeys.PAGE_COUNT));
+    assertEquals("Del Rey", book.getData(StandardBookDataKeys.PUBLISHER));
     assertEquals(
-        book.getData(StandardBookDataKeys.AUTHORS),
-        Collections.singletonList(new Pair<>("Douglas Adams", "Autor"))
+        Collections.singletonList(new Pair<>("Douglas Adams", "Autor")),
+        book.getData(StandardBookDataKeys.AUTHORS)
     );
   }
 
   @Test
-  @Disabled
   void scrapeFunkeDrachenreiterWrongVersionSelected() {
-    // FIXME: 28.06.17 Crashes due to an Out of memory exception!
     Book book = pageScraper
-        .scrape("https://www.amazon.de/Drachenreiter-Cornelia-Funke-ebook/dp/B008PQZU4M");
+        .scrape(
+            "https://www.amazon.de/Drachenreiter-Cornelia-Funke-ebook/dp/B008PQZU4M",
+            "Hardcover"
+        );
 
-    assertEquals(book.getData(StandardBookDataKeys.TITLE), "Drachenreiter");
-    assertEquals(book.getData(StandardBookDataKeys.LANGUAGE), "Deutsch");
-    assertEquals(book.getData(StandardBookDataKeys.PAGE_COUNT), Integer.valueOf(448));
-    assertEquals(book.getData(StandardBookDataKeys.PUBLISHER), "Dressler Verlag");
+    assertEquals("Drachenreiter", book.getData(StandardBookDataKeys.TITLE));
+    assertEquals("Deutsch", book.getData(StandardBookDataKeys.LANGUAGE));
+    assertEquals(Integer.valueOf(448), book.getData(StandardBookDataKeys.PAGE_COUNT));
+    assertEquals("Dressler Verlag", book.getData(StandardBookDataKeys.PUBLISHER));
     assertEquals(
-        book.getData(StandardBookDataKeys.AUTHORS),
-        Collections.singletonList(new Pair<>("Cornelia Funke", "Autor, Illustrator"))
+        Collections.singletonList(new Pair<>("Cornelia Funke", "Autor, Illustrator")),
+        book.getData(StandardBookDataKeys.AUTHORS)
     );
   }
-
 }

@@ -5,9 +5,11 @@ import static me.ialistannen.isbnlookuplib.util.JsoupUtil.getFirst;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -56,6 +58,17 @@ class DetailPageScraper {
    * @return The scraped book. May contain no data.
    */
   Book scrape(String url) {
+    return scrape(url, "");
+  }
+
+  /**
+   * Scrapes a detail page for book information.
+   *
+   * @param url The URL of the book
+   * @param preferredEdition The preferred edition of the book
+   * @return The scraped book. May contain no data.
+   */
+  Book scrape(String url, String preferredEdition) {
     Book book = new Book();
 
     Document document = WebsiteFetcher.getWebsite(url);
@@ -64,7 +77,7 @@ class DetailPageScraper {
       return book;
     }
 
-    document = selectRightEdition(document);
+    document = selectRightEdition(document, preferredEdition);
 
     if (document == null) {
       return book;
@@ -243,7 +256,7 @@ class DetailPageScraper {
         );
   }
 
-  private Document selectRightEdition(Document document) {
+  private Document selectRightEdition(Document document, String preferred) {
     Set<String> acceptedEditions = new HashSet<>(
         Arrays.asList(language.translate("good_editions")
             .split("\\|"))
@@ -255,9 +268,8 @@ class DetailPageScraper {
       return document;
     }
 
-    AtomicReference<String> goodEditionUrl = new AtomicReference<>(null);
-
-    AtomicReference<String> thisElementEdition = new AtomicReference<>("");
+    AtomicReference<String> thisEdition = new AtomicReference<>("");
+    Map<String, String> goodUrls = new HashMap<>();
 
     for (Element element : ul.get(0).children()) {
       Elements texts = element.getElementsByClass("a-button-text");
@@ -267,25 +279,37 @@ class DetailPageScraper {
 
             String edition = getSwatchEdition(link);
             if (element.hasClass("selected")) {
-              thisElementEdition.set(edition);
+              thisEdition.set(edition);
             }
 
-            if (acceptedEditions.contains(edition) && !url.isEmpty()) {
-              goodEditionUrl.set(url);
+            if (acceptedEditions.contains(edition)) {
+              goodUrls.put(edition, url);
             }
           });
     }
 
-    if (goodEditionUrl.get() != null && !acceptedEditions.contains(thisElementEdition.get())) {
-      return WebsiteFetcher.getWebsite(goodEditionUrl.get());
-    }
-
     // Nothing found!
-    if (goodEditionUrl.get() == null) {
+    if (goodUrls.isEmpty()) {
       return null;
     }
 
-    return document;
+    if (goodUrls.containsKey(preferred)) {
+      // Our version is the preferred
+      if (preferred.equals(thisEdition.get())) {
+        return document;
+      }
+      // get the preferred one!
+      return WebsiteFetcher.getWebsite(goodUrls.get(preferred));
+    }
+
+    // Our version is okay. Fetching would not be possible, as the current element has no url!
+    if (goodUrls.containsKey(thisEdition.get())) {
+      return document;
+    }
+
+    // return *some* good version.
+    // Will never be thisEdition, which is needed as thisEdition has no ur!
+    return WebsiteFetcher.getWebsite(goodUrls.values().iterator().next());
   }
 
   private String getSwatchEdition(Element element) {
