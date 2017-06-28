@@ -1,9 +1,9 @@
 package me.ialistannen.isbnlookuplib.isbn.factories;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn13Validator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -11,12 +11,7 @@ import org.junit.jupiter.api.Test;
  */
 class Isbn13FactoryTest {
 
-  private Isbn13Factory factory;
-
-  @BeforeEach
-  void setUp() {
-    factory = new Isbn13Factory(new Isbn13Validator());
-  }
+  private Isbn13Factory factory = new Isbn13Factory(new Isbn13Validator());
 
   @Test
   void generate() {

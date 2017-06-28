@@ -1,16 +1,27 @@
 package me.ialistannen.isbnlookuplib.lookup.providers.amazon;
 
+import static me.ialistannen.isbnlookuplib.util.JsoupUtil.getFirst;
+
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.ialistannen.isbnlookuplib.book.Book;
+import me.ialistannen.isbnlookuplib.book.BookDataKey;
 import me.ialistannen.isbnlookuplib.book.StandardBookDataKeys;
 import me.ialistannen.isbnlookuplib.i18n.DefaultCategories;
 import me.ialistannen.isbnlookuplib.i18n.Language;
+import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
+import me.ialistannen.isbnlookuplib.util.JsoupUtil;
 import me.ialistannen.isbnlookuplib.util.NumberUtil;
 import me.ialistannen.isbnlookuplib.util.Pair;
 import me.ialistannen.isbnlookuplib.util.WebsiteFetcher;
@@ -23,10 +34,20 @@ import org.jsoup.select.Elements;
  */
 class DetailPageScraper {
 
-  @SuppressWarnings("ConstantConditions")
-  private Language language = DefaultCategories.AMAZON_SCRAPER.getCategory().getLanguage(
-      Locale.GERMAN
-  ).get();
+  private Locale locale;
+  private Language language;
+  private IsbnConverter isbnConverter;
+
+  /**
+   * @param isbnConverter The {@link IsbnConverter} to use
+   */
+  DetailPageScraper(Locale locale, IsbnConverter isbnConverter) {
+    this.locale = locale;
+    this.isbnConverter = isbnConverter;
+
+    language = DefaultCategories.AMAZON_SCRAPER.getCategory().getLanguage(locale)
+        .orElseThrow(() -> new IllegalArgumentException("No language found!"));
+  }
 
   /**
    * Scrapes a detail page for book information.
@@ -43,11 +64,22 @@ class DetailPageScraper {
       return book;
     }
 
+    document = selectRightEdition(document);
+
+    if (document == null) {
+      return book;
+    }
+
     addAuthor(document, book);
     addPageCount(document, book);
     addLanguage(document, book);
     addPublisher(document, book);
     addRating(document, book);
+    addIsbn(document, book);
+    addCoverType(document, book);
+    addTitle(document, book);
+    addDescription(document, book);
+    addPrice(document, book);
 
     return book;
   }
@@ -89,9 +121,9 @@ class DetailPageScraper {
   }
 
   private void addPageCount(Document document, Book book) {
-    String pageCountName = language.translate("page_count_suffix");
+    String pageCountSuffix = language.translate("page_count_suffix");
 
-    Pattern extractorPattern = Pattern.compile(".+:\\s*(\\d+)\\s*" + pageCountName);
+    Pattern extractorPattern = Pattern.compile(".+:\\s*(\\d+)\\s*" + pageCountSuffix);
 
     applyToProductInformation(
         document,
@@ -114,7 +146,7 @@ class DetailPageScraper {
 
   private void addPublisher(Document document, Book book) {
     String publisherPrefix = language.translate("publisher_prefix");
-    Pattern extractorPattern = Pattern.compile("\\s*" + publisherPrefix + ":\\s*([\\w\\s]+).+\\s*");
+    Pattern extractorPattern = Pattern.compile("\\s*" + publisherPrefix + ":\\s*([\\w\\s]+).*\\s*");
 
     applyToProductInformation(
         document,
@@ -125,7 +157,7 @@ class DetailPageScraper {
 
   private void addRating(Document document, Book book) {
     String ratingPrefix = language.translate("rating_prefix");
-    Pattern extractorPattern = Pattern.compile("\\s*" + ratingPrefix + ":\\s*([\\d.]+).+\\s*");
+    Pattern extractorPattern = Pattern.compile("\\s*" + ratingPrefix + ":\\s*([\\d.]+).*\\s*");
 
     applyToProductInformation(
         document,
@@ -134,6 +166,130 @@ class DetailPageScraper {
             book.setData(StandardBookDataKeys.RATING, value / 5.0)
         )
     );
+  }
+
+  private void addIsbn(Document document, Book book) {
+    String isbnPrefix = language.translate("isbn_prefix");
+    Pattern extractorPattern = Pattern.compile("\\s*" + isbnPrefix + ":\\s*([\\d-]+).*\\s*");
+
+    applyToProductInformation(
+        document,
+        extractorPattern,
+        matcher -> isbnConverter.fromString(matcher.group(1))
+            .ifPresent(isbn -> book.setData(StandardBookDataKeys.ISBN, isbn))
+    );
+  }
+
+  private void addCoverType(Document document, Book book) {
+    String pageCountSuffix = language.translate("page_count_suffix");
+    Pattern extractorPattern = Pattern.compile("\\s*(.+):\\s*\\d+\\s*" + pageCountSuffix + ".*");
+
+    applyToProductInformation(
+        document,
+        extractorPattern,
+        matcher -> book.setData(StandardBookDataKeys.COVER_TYPE, matcher.group(1))
+    );
+  }
+
+  private void addTitle(Document document, Book book) {
+    Element productTitle = document.getElementById("productTitle");
+    if (productTitle == null) {
+      return;
+    }
+    book.setData(StandardBookDataKeys.TITLE, productTitle.text());
+  }
+
+  private void addDescription(Document document, Book book) {
+    Elements descriptionElements = document
+        .getElementsByAttributeValue("data-feature-name", "bookDescription");
+    if (descriptionElements.isEmpty()) {
+      return;
+    }
+    Element description = descriptionElements.get(0);
+    if (!description.getElementsByTag("noscript").isEmpty()) {
+      description = description.getElementsByTag("noscript").get(0);
+    }
+    book.setData(
+        StandardBookDataKeys.DESCRIPTION,
+        JsoupUtil.toStringRespectLinebreak(description).trim()
+    );
+  }
+
+  private void addPrice(Document document, Book book) {
+    Element formatContainer = document.getElementById("tmmSwatches");
+    Elements ul = formatContainer.getElementsByTag("ul");
+    if (ul.isEmpty()) {
+      return;
+    }
+    Pattern extractPricePattern = Pattern.compile("[^\\d]*(\\d.+)");
+
+    ul.get(0).children().stream()
+        .filter(element -> element.hasClass("selected"))
+        .map(element -> element.getElementsByClass("a-button-text"))
+        .filter(elements -> !elements.isEmpty())
+        .flatMap(Collection::stream)
+        .forEach(element -> getFirst(element.getElementsByClass("a-color-price"))
+            .ifPresent(priceElement -> {
+
+              String text = priceElement.text().trim();
+              Matcher matcher = extractPricePattern.matcher(text);
+              if (matcher.find()) {
+                text = matcher.group(1);
+
+                NumberUtil.parseDouble(text, locale)
+                    .ifPresent(value -> book.setData(StandardBookDataKeys.PRICE, value));
+              }
+            })
+        );
+  }
+
+  private Document selectRightEdition(Document document) {
+    Set<String> acceptedEditions = new HashSet<>(
+        Arrays.asList(language.translate("good_editions")
+            .split("\\|"))
+    );
+
+    Element formatContainer = document.getElementById("tmmSwatches");
+    Elements ul = formatContainer.getElementsByTag("ul");
+    if (ul.isEmpty()) {
+      return document;
+    }
+
+    AtomicReference<String> goodEditionUrl = new AtomicReference<>(null);
+
+    AtomicReference<String> thisElementEdition = new AtomicReference<>("");
+
+    for (Element element : ul.get(0).children()) {
+      Elements texts = element.getElementsByClass("a-button-text");
+      getFirst(texts)
+          .ifPresent(link -> {
+            String url = link.absUrl("href");
+
+            String edition = getSwatchEdition(link);
+            if (element.hasClass("selected")) {
+              thisElementEdition.set(edition);
+            }
+
+            if (acceptedEditions.contains(edition) && !url.isEmpty()) {
+              goodEditionUrl.set(url);
+            }
+          });
+    }
+
+    if (goodEditionUrl.get() != null && !acceptedEditions.contains(thisElementEdition.get())) {
+      return WebsiteFetcher.getWebsite(goodEditionUrl.get());
+    }
+
+    // Nothing found!
+    if (goodEditionUrl.get() == null) {
+      return null;
+    }
+
+    return document;
+  }
+
+  private String getSwatchEdition(Element element) {
+    return JsoupUtil.toStringRespectLinebreak(element).split("\n")[0].trim();
   }
 
   private void applyToProductInformation(Document document, Pattern extractorPattern,
@@ -161,11 +317,34 @@ class DetailPageScraper {
   }
 
   public static void main(String[] args) {
-    DetailPageScraper scraper = new DetailPageScraper();
+    DetailPageScraper scraper = new DetailPageScraper(Locale.GERMAN, new IsbnConverter());
     String url = "https://www.amazon.de/Drachenreiter-Cornelia-Funke/dp/3791504541/"
         + "ref=sr_1_1/258-7589277-1449228?ie=UTF8&qid=1498418023&sr=8-1&keywords=9783791504544";
 //    url = "https://www.amazon.de/Die-Eule-Beule-Popular-Fiction/dp/3789167061"
 //        + "/ref=sr_1_1?ie=UTF8&qid=1498418557&sr=8-1&keywords=Buch";
+//    url = "https://www.amazon.de/Hitchhikers-Guide-Galaxy-Douglas-Adams/dp/0345391802/"
+//        + "ref=sr_1_1?ie=UTF8&qid=1498414285&sr=8-1&keywords=9780345391803";
+
+    // KINDLE EDITION (AKA bad)
+//    url = "https://www.amazon.de/Drachenreiter-Cornelia-Funke-ebook/dp/B008PQZU4M/"
+//        + "ref=tmm_kin_swatch_0?_encoding=UTF8&qid=1498582478&sr=8-1";
+    // ONLY AN AUDIO BOOK
+//    url =
+//        "https://www.amazon.de/Benedict-Cumberbatch-Sherlock-Rediscovered-Mysteries/dp/1785291572/"
+//            + "ref=sr_1_1?ie=UTF8&qid=1498582554&sr=8-1&keywords=Audiobook";
+
     System.out.println(scraper.scrape(url));
+
+    System.out.println();
+
+    int maxLength = Arrays.stream(StandardBookDataKeys.values())
+        .map(Enum::name)
+        .mapToInt(String::length)
+        .max()
+        .orElse(10);
+
+    for (Entry<BookDataKey, Object> entry : scraper.scrape(url).getAllData().entrySet()) {
+      System.out.printf("%-" + maxLength + "s : %s\n", entry.getKey(), entry.getValue());
+    }
   }
 }

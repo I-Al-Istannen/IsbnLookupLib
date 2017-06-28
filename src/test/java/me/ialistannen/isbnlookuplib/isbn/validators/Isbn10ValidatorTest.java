@@ -3,7 +3,6 @@ package me.ialistannen.isbnlookuplib.isbn.validators;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -11,12 +10,7 @@ import org.junit.jupiter.api.Test;
  */
 class Isbn10ValidatorTest {
 
-  private Isbn10Validator isbn10Validator;
-
-  @BeforeEach
-  private void setup() {
-    isbn10Validator = new Isbn10Validator();
-  }
+  private Isbn10Validator isbn10Validator = new Isbn10Validator();
 
   @Test
   void isValidIsbn() {

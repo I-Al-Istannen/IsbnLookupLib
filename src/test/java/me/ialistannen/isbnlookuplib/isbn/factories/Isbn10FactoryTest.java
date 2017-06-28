@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn10Validator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,12 +12,7 @@ import org.junit.jupiter.api.Test;
  */
 class Isbn10FactoryTest {
 
-  private Isbn10Factory factory;
-
-  @BeforeEach
-  private void setup() {
-    factory = new Isbn10Factory(new Isbn10Validator());
-  }
+  private Isbn10Factory factory = new Isbn10Factory(new Isbn10Validator());
 
   @Test
   void generate() {

@@ -7,7 +7,6 @@ import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -15,12 +14,7 @@ import org.junit.jupiter.api.Test;
  */
 class IsbnConverterTest {
 
-  private IsbnConverter isbnConverter;
-
-  @BeforeEach
-  void setUp() {
-    isbnConverter = new IsbnConverter();
-  }
+  private IsbnConverter isbnConverter = new IsbnConverter();
 
   @Test
   void fromString() {

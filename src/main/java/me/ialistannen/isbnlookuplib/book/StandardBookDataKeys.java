@@ -40,6 +40,10 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   PUBLISHER,
   /**
+   * A String
+   */
+  COVER_TYPE,
+  /**
    * A double (System depends on platform, this is normalized to percent out of one hundred)
    */
   RATING
