@@ -14,6 +14,9 @@ public class IsbnConverter {
   private IsbnValidators validators;
   private IsbnFactories factories;
 
+  /**
+   * Creates a new {@link IsbnConverter}.
+   */
   public IsbnConverter() {
     validators = new IsbnValidators();
     factories = new IsbnFactories(this);
@@ -42,11 +45,5 @@ public class IsbnConverter {
     }
 
     return Optional.empty();
-  }
-
-  public static void main(String[] args) {
-    String isbnString = "0-306-40615-2";
-    IsbnConverter converter = new IsbnConverter();
-    System.out.println(converter.fromString(isbnString));
   }
 }

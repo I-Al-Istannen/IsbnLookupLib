@@ -10,7 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,7 +17,6 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.ialistannen.isbnlookuplib.book.Book;
-import me.ialistannen.isbnlookuplib.book.BookDataKey;
 import me.ialistannen.isbnlookuplib.book.StandardBookDataKeys;
 import me.ialistannen.isbnlookuplib.i18n.DefaultCategories;
 import me.ialistannen.isbnlookuplib.i18n.Language;
@@ -42,6 +40,8 @@ class DetailPageScraper {
 
   /**
    * @param isbnConverter The {@link IsbnConverter} to use
+   * @param locale The {@link Locale} to use. Throws an exception if not found!
+   * @throws IllegalArgumentException if the locale was not found
    */
   DetailPageScraper(Locale locale, IsbnConverter isbnConverter) {
     this.locale = locale;
@@ -338,37 +338,5 @@ class DetailPageScraper {
         .filter(element -> element.text().contains(productInformation))
         .findFirst()
         .map(Element::nextElementSibling);
-  }
-
-  public static void main(String[] args) {
-    DetailPageScraper scraper = new DetailPageScraper(Locale.GERMAN, new IsbnConverter());
-    String url = "https://www.amazon.de/Drachenreiter-Cornelia-Funke/dp/3791504541/"
-        + "ref=sr_1_1/258-7589277-1449228?ie=UTF8&qid=1498418023&sr=8-1&keywords=9783791504544";
-//    url = "https://www.amazon.de/Die-Eule-Beule-Popular-Fiction/dp/3789167061"
-//        + "/ref=sr_1_1?ie=UTF8&qid=1498418557&sr=8-1&keywords=Buch";
-//    url = "https://www.amazon.de/Hitchhikers-Guide-Galaxy-Douglas-Adams/dp/0345391802/"
-//        + "ref=sr_1_1?ie=UTF8&qid=1498414285&sr=8-1&keywords=9780345391803";
-
-    // KINDLE EDITION (AKA bad)
-//    url = "https://www.amazon.de/Drachenreiter-Cornelia-Funke-ebook/dp/B008PQZU4M/"
-//        + "ref=tmm_kin_swatch_0?_encoding=UTF8&qid=1498582478&sr=8-1";
-    // ONLY AN AUDIO BOOK
-//    url =
-//        "https://www.amazon.de/Benedict-Cumberbatch-Sherlock-Rediscovered-Mysteries/dp/1785291572/"
-//            + "ref=sr_1_1?ie=UTF8&qid=1498582554&sr=8-1&keywords=Audiobook";
-
-    System.out.println(scraper.scrape(url));
-
-    System.out.println();
-
-    int maxLength = Arrays.stream(StandardBookDataKeys.values())
-        .map(Enum::name)
-        .mapToInt(String::length)
-        .max()
-        .orElse(10);
-
-    for (Entry<BookDataKey, Object> entry : scraper.scrape(url).getAllData().entrySet()) {
-      System.out.printf("%-" + maxLength + "s : %s\n", entry.getKey(), entry.getValue());
-    }
   }
 }
