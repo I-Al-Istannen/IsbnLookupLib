@@ -11,7 +11,7 @@ import me.ialistannen.isbnlookuplib.isbn.validators.Isbn10Validator;
  */
 public class Isbn10Factory extends IsbnFactory {
 
-  public Isbn10Factory(Isbn10Validator validator) {
+  Isbn10Factory(Isbn10Validator validator) {
     super(validator);
   }
 

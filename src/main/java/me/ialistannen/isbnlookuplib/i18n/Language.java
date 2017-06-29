@@ -17,7 +17,6 @@ public class Language {
       .expireAfterAccess(5, TimeUnit.MINUTES) // // TODO: 26.06.17 Why do I even use a cache?
       .build(MessageFormat::new);
 
-  private Locale locale;
   private ResourceBundle bundle;
 
   /**
@@ -26,23 +25,15 @@ public class Language {
    * @throws UnknownLanguageException if the passed locale does not equal the actual language
    * returned by the {@link ResourceBundle}. <em>No control flow, yada, yada...</em>
    */
-  public Language(Locale locale, Category category) throws UnknownLanguageException {
-    this.locale = locale;
+  Language(Locale locale, Category category) throws UnknownLanguageException {
     bundle = ResourceBundle.getBundle(category.getPath(), locale);
 
-    if (!bundle.getLocale().equals(getLocale())) {
+    if (!bundle.getLocale().equals(locale)) {
       throw new UnknownLanguageException(String.format(
           "Unknown locale '%s' for category '%s'. Closest match was '%s'",
           locale.getDisplayName(), category.getPath(), bundle.getLocale().getDisplayName()
       ));
     }
-  }
-
-  /**
-   * @return The {@link Locale} of this {@link Language}.
-   */
-  public Locale getLocale() {
-    return locale;
   }
 
   /**
@@ -62,11 +53,23 @@ public class Language {
     return messageFormat.format(formattingObjects);
   }
 
-  private String getValue(String key) {
+  /**
+   * @param key The key to check
+   * @return True if the key exist in the locale file
+   */
+  public boolean hasKey(String key) {
     try {
-      return bundle.getString(key);
+      bundle.getString(key);
+      return true;
     } catch (MissingResourceException e) {
+      return false;
+    }
+  }
+
+  private String getValue(String key) {
+    if (!hasKey(key)) {
       return "Key '" + key + "' not found.";
     }
+    return bundle.getString(key);
   }
 }

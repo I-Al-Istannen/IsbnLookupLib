@@ -14,7 +14,7 @@ public class Isbn13Factory extends IsbnFactory {
   /**
    * @param validator The {@link Isbn13Validator} to use
    */
-  public Isbn13Factory(Isbn13Validator validator) {
+  Isbn13Factory(Isbn13Validator validator) {
     super(validator);
   }
 

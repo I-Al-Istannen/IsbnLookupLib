@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * Some utility functions for Strings.
  */
-public class StringUtil {
+class StringUtil {
 
   private static Set<Character> SPACE_EQUIVALENTS = new HashSet<>(Arrays.asList(
       '\u00A0', // no break space
@@ -21,7 +21,7 @@ public class StringUtil {
    * @param string The string to sanitize spaces in
    * @return The same string but all spaces converted to normal ones
    */
-  public static String sanitizeSpaces(String string) {
+  static String sanitizeSpaces(String string) {
     String result = string;
     for (Character spaceEquivalent : SPACE_EQUIVALENTS) {
       result = result.replace(spaceEquivalent, ' ');

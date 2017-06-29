@@ -38,7 +38,7 @@ public class IsbnFactories {
    * @param type The type of the ISBN
    * @param factory The {@link IsbnFactory} to use
    */
-  public void addFactory(IsbnType type, IsbnFactory factory) {
+  private void addFactory(IsbnType type, IsbnFactory factory) {
     isbnFactoryMap.put(type, factory);
   }
 

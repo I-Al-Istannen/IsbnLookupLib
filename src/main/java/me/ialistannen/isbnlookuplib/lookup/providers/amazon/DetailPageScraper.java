@@ -94,6 +94,8 @@ class DetailPageScraper {
     addDescription(document, book);
     addPrice(document, book);
 
+    book.setData(() -> "URL", document.location());
+
     return book;
   }
 
@@ -222,9 +224,15 @@ class DetailPageScraper {
     if (!description.getElementsByTag("noscript").isEmpty()) {
       description = description.getElementsByTag("noscript").get(0);
     }
+
+    String descriptionString = JsoupUtil.toStringRespectLinebreak(description).trim();
+    if (descriptionString.isEmpty()) {
+      return;
+    }
+
     book.setData(
         StandardBookDataKeys.DESCRIPTION,
-        JsoupUtil.toStringRespectLinebreak(description).trim()
+        descriptionString
     );
   }
 

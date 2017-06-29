@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -40,7 +41,7 @@ class BookSearcherTest {
   @Test
   void getBookUrl() {
     for (Entry<Isbn, String> entry : isbnUrlMap.entrySet()) {
-      Optional<String> bookUrl = bookSearcher.getBookUrl(entry.getKey());
+      Optional<String> bookUrl = bookSearcher.getBookUrl(entry.getKey(), Locale.GERMAN);
 
       if (entry.getValue() == null) {
         assertFalse(bookUrl.isPresent());

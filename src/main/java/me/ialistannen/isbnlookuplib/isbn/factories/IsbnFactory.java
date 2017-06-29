@@ -14,7 +14,7 @@ public abstract class IsbnFactory {
   /**
    * @param validator The {@link IsbnValidator} to use
    */
-  public IsbnFactory(IsbnValidator validator) {
+  IsbnFactory(IsbnValidator validator) {
     this.validator = validator;
   }
 
@@ -29,7 +29,7 @@ public abstract class IsbnFactory {
   /**
    * @return The {@link IsbnValidator}
    */
-  protected IsbnValidator getValidator() {
+  IsbnValidator getValidator() {
     return validator;
   }
 }

@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.ResourceBundle.Control;
 
 /**
- *
+ * A category of language files.
  */
 public class Category {
 
@@ -18,7 +18,7 @@ public class Category {
    * @param path The Path to the resources for this category
    * @see java.util.ResourceBundle#getBundle(String, Locale, ClassLoader, Control)
    */
-  public Category(String path) {
+  Category(String path) {
     this.path = path;
   }
 
@@ -45,7 +45,7 @@ public class Category {
   /**
    * @return The path of the {@link Category}
    */
-  public String getPath() {
+  String getPath() {
     return path;
   }
 }
