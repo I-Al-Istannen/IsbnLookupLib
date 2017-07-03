@@ -1,20 +1,22 @@
 package me.ialistannen.isbnlookuplib.isbn.factories;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn13Validator;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  *
  */
-class Isbn13FactoryTest {
+@SuppressWarnings("unused")
+public class Isbn13FactoryTest {
 
   private Isbn13Factory factory = new Isbn13Factory(new Isbn13Validator());
 
   @Test
-  void generate() {
+  public void generate() {
     // Valid ISBNs
     assertTrue(isGenerated("9783596800643"));
     assertTrue(isGenerated("9783791504452"));

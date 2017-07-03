@@ -1,21 +1,22 @@
 package me.ialistannen.isbnlookuplib.isbn.validators;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  *
  */
-class Isbn13ValidatorTest {
+public class Isbn13ValidatorTest {
 
   private Isbn13Validator validator = new Isbn13Validator();
 
   @Test
-  void isValidIsbn() {
+  public void isValidIsbn() {
     // Good ISBNs
     assertTrue(validateIsbn(new short[]{9, 7, 8, 3, 7, 9, 1, 5, 0, 4, 5, 9, 9}));
     assertTrue(validateIsbn(new short[]{9, 7, 8, 3, 5, 9, 6, 8, 0, 3, 0, 0, 2}));

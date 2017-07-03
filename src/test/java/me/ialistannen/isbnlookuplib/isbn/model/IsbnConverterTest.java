@@ -1,26 +1,25 @@
 package me.ialistannen.isbnlookuplib.isbn.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import me.ialistannen.isbnlookuplib.util.Optional;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  *
  */
-class IsbnConverterTest {
+public class IsbnConverterTest {
 
   private IsbnConverter isbnConverter = new IsbnConverter();
 
   @Test
-  void fromString() {
+  public void fromString() {
     // VALID ISBN 10
-    Assertions.assertEquals(IsbnType.ISBN_10, getIsbnType("080442957X"));
+    assertEquals(IsbnType.ISBN_10, getIsbnType("080442957X"));
     assertEquals(IsbnType.ISBN_10, getIsbnType("3791504649"));
     assertEquals(IsbnType.ISBN_10, getIsbnType("3791504533"));
 

@@ -1,8 +1,8 @@
 package me.ialistannen.isbnlookuplib.lookup.providers.amazon;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -13,12 +13,12 @@ import java.util.regex.Pattern;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import me.ialistannen.isbnlookuplib.util.Optional;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 /**
  *
  */
-class BookSearcherTest {
+public class BookSearcherTest {
 
   private static final Pattern idExtractor = Pattern.compile(".+\\/dp\\/(.+?)\\/.+");
 
@@ -39,7 +39,7 @@ class BookSearcherTest {
   }};
 
   @Test
-  void getBookUrl() {
+  public void getBookUrl() {
     for (Entry<Isbn, String> entry : isbnUrlMap.entrySet()) {
       Optional<String> bookUrl = bookSearcher.getBookUrl(entry.getKey(), Locale.GERMAN);
 
