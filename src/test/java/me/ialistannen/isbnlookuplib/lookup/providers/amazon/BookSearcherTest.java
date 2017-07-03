@@ -8,11 +8,11 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
+import me.ialistannen.isbnlookuplib.util.Optional;
 import org.junit.jupiter.api.Test;
 
 /**

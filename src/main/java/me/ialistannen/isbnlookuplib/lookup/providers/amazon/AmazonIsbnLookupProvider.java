@@ -1,11 +1,11 @@
 package me.ialistannen.isbnlookuplib.lookup.providers.amazon;
 
 import java.util.Locale;
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.book.Book;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.lookup.IsbnLookupProvider;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * Looks up {@link Book} by {@link Isbn} using Amazon.
@@ -32,8 +32,16 @@ public class AmazonIsbnLookupProvider implements IsbnLookupProvider {
 
   @Override
   public Optional<Book> lookup(Isbn isbn) {
-    return bookSearcher.getBookUrl(isbn, locale)
-        .map(url -> detailPageScraper.scrape(url))
-        .filter(book -> !book.getAllData().isEmpty());
+    Optional<String> bookUrl = bookSearcher.getBookUrl(isbn, locale);
+    if (!bookUrl.isPresent()) {
+      return Optional.empty();
+    }
+
+    Book scrapedBook = detailPageScraper.scrape(bookUrl.get());
+    if (scrapedBook.getAllData().isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.of(scrapedBook);
   }
 }

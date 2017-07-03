@@ -52,11 +52,12 @@ public class Book {
    */
   @SuppressWarnings("unused")
   public String nicerToString() {
-    int maxLength = getAllData().keySet().stream()
-        .map(BookDataKey::name)
-        .mapToInt(String::length)
-        .max()
-        .orElse(10);
+    int maxLength = 10;
+    for (BookDataKey bookDataKey : getAllData().keySet()) {
+      if (bookDataKey.name().length() > maxLength) {
+        maxLength = bookDataKey.name().length();
+      }
+    }
 
     StringBuilder stringBuilder = new StringBuilder();
     for (Entry<BookDataKey, Object> entry : getAllData().entrySet()) {

@@ -3,8 +3,6 @@ package me.ialistannen.isbnlookuplib.util;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Locale;
-import java.util.OptionalDouble;
-import java.util.OptionalInt;
 
 /**
  * A util to deal with Numbers.
@@ -17,11 +15,11 @@ public class NumberUtil {
    * @param input The input string
    * @return The parsed int, if any
    */
-  public static OptionalInt parseInt(String input) {
+  public static Optional<Integer> parseInt(String input) {
     try {
-      return OptionalInt.of(Integer.parseInt(input));
+      return Optional.of(Integer.parseInt(input));
     } catch (NumberFormatException e) {
-      return OptionalInt.empty();
+      return Optional.empty();
     }
   }
 
@@ -31,11 +29,11 @@ public class NumberUtil {
    * @param input The input string
    * @return The parsed double, if any
    */
-  public static OptionalDouble parseDouble(String input) {
+  public static Optional<Double> parseDouble(String input) {
     try {
-      return OptionalDouble.of(Double.parseDouble(input));
+      return Optional.of(Double.parseDouble(input));
     } catch (NumberFormatException e) {
-      return OptionalDouble.empty();
+      return Optional.empty();
     }
   }
 
@@ -46,11 +44,11 @@ public class NumberUtil {
    * @param locale The locale to use
    * @return The parsed double, if any
    */
-  public static OptionalDouble parseDouble(String input, Locale locale) {
+  public static Optional<Double> parseDouble(String input, Locale locale) {
     try {
-      return OptionalDouble.of(NumberFormat.getInstance(locale).parse(input).doubleValue());
+      return Optional.of(NumberFormat.getInstance(locale).parse(input).doubleValue());
     } catch (ParseException e) {
-      return OptionalDouble.empty();
+      return Optional.empty();
     }
   }
 }

@@ -1,8 +1,8 @@
 package me.ialistannen.isbnlookuplib.isbn.factories;
 
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.validators.IsbnValidator;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * A class that generates {@link Isbn}'s from a String.

@@ -1,8 +1,8 @@
 package me.ialistannen.isbnlookuplib.lookup;
 
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.book.Book;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * Returns information about a book based on the {@link Isbn}.

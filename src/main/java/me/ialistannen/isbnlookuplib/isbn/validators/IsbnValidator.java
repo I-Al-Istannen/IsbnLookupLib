@@ -5,7 +5,6 @@ import me.ialistannen.isbnlookuplib.isbn.Isbn;
 /**
  * A validator for an ISBN.
  */
-@FunctionalInterface
 public interface IsbnValidator {
 
   /**

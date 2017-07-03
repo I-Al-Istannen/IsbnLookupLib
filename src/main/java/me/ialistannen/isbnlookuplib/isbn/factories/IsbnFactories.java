@@ -7,7 +7,9 @@ import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn10Validator;
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn13Validator;
+import me.ialistannen.isbnlookuplib.isbn.validators.IsbnValidator;
 import me.ialistannen.isbnlookuplib.isbn.validators.IsbnValidators;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * A collection of {@link IsbnFactory}s.
@@ -22,13 +24,17 @@ public class IsbnFactories {
   public IsbnFactories(IsbnConverter isbnConverter) {
     IsbnValidators validators = isbnConverter.getValidators();
 
-    validators.getValidator(IsbnType.ISBN_10)
-        .map(isbnValidator -> (Isbn10Validator) isbnValidator)
-        .ifPresent(isbnValidator -> addFactory(IsbnType.ISBN_10, new Isbn10Factory(isbnValidator)));
+    Optional<IsbnValidator> validator10Optional = validators.getValidator(IsbnType.ISBN_10);
+    if (validator10Optional.isPresent()) {
+      Isbn10Validator isbnValidator = (Isbn10Validator) validator10Optional.get();
+      addFactory(IsbnType.ISBN_10, new Isbn10Factory(isbnValidator));
+    }
 
-    validators.getValidator(IsbnType.ISBN_13)
-        .map(isbnValidator -> (Isbn13Validator) isbnValidator)
-        .ifPresent(isbnValidator -> addFactory(IsbnType.ISBN_13, new Isbn13Factory(isbnValidator)));
+    Optional<IsbnValidator> validator13Optional = validators.getValidator(IsbnType.ISBN_13);
+    if (validator13Optional.isPresent()) {
+      Isbn13Validator isbnValidator = (Isbn13Validator) validator13Optional.get();
+      addFactory(IsbnType.ISBN_13, new Isbn13Factory(isbnValidator));
+    }
   }
 
 

@@ -1,6 +1,5 @@
 package me.ialistannen.isbnlookuplib.util;
 
-import java.util.Optional;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
@@ -20,7 +19,7 @@ public class JsoupUtil {
    * @return The element's text, respecting line breaks
    */
   public static String toStringRespectLinebreak(Element element) {
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
 
     new NodeTraversor(new NodeVisitor() {
       @Override
@@ -51,6 +50,6 @@ public class JsoupUtil {
    * @return The first element if any
    */
   public static Optional<Element> getFirst(Elements elements) {
-    return elements.isEmpty() ? Optional.empty() : Optional.of(elements.get(0));
+    return elements.isEmpty() ? Optional.<Element>empty() : Optional.of(elements.get(0));
   }
 }

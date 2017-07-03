@@ -4,25 +4,27 @@ import static me.ialistannen.isbnlookuplib.util.JsoupUtil.getFirst;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import me.ialistannen.isbnlookuplib.book.Book;
+import me.ialistannen.isbnlookuplib.book.BookDataKey;
 import me.ialistannen.isbnlookuplib.book.StandardBookDataKeys;
 import me.ialistannen.isbnlookuplib.i18n.DefaultCategories;
 import me.ialistannen.isbnlookuplib.i18n.Language;
+import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
+import me.ialistannen.isbnlookuplib.util.Consumer;
 import me.ialistannen.isbnlookuplib.util.JsoupUtil;
 import me.ialistannen.isbnlookuplib.util.NumberUtil;
+import me.ialistannen.isbnlookuplib.util.Optional;
 import me.ialistannen.isbnlookuplib.util.Pair;
 import me.ialistannen.isbnlookuplib.util.WebsiteFetcher;
 import org.jsoup.nodes.Document;
@@ -48,7 +50,7 @@ class DetailPageScraper {
     this.isbnConverter = isbnConverter;
 
     language = DefaultCategories.AMAZON_SCRAPER.getCategory().getLanguage(locale)
-        .orElseThrow(() -> new IllegalArgumentException("No language found!"));
+        .orElseThrowIllegalArgumentException("No language found!");
   }
 
   /**
@@ -94,7 +96,12 @@ class DetailPageScraper {
     addDescription(document, book);
     addPrice(document, book);
 
-    book.setData(() -> "URL", document.location());
+    book.setData(new BookDataKey() {
+      @Override
+      public String name() {
+        return "URL";
+      }
+    }, document.location());
 
     return book;
   }
@@ -135,7 +142,7 @@ class DetailPageScraper {
     return author.getElementsByTag("a").text();
   }
 
-  private void addPageCount(Document document, Book book) {
+  private void addPageCount(Document document, final Book book) {
     String pageCountSuffix = language.translate("page_count_suffix");
 
     Pattern extractorPattern = Pattern.compile(".+:\\s*(\\d+)\\s*" + pageCountSuffix);
@@ -143,66 +150,108 @@ class DetailPageScraper {
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> NumberUtil.parseInt(matcher.group(1))
-            .ifPresent(page -> book.setData(StandardBookDataKeys.PAGE_COUNT, page))
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            NumberUtil.parseInt(matcher.group(1))
+                .ifPresent(new Consumer<Integer>() {
+                  @Override
+                  public void accept(Integer page) {
+                    book.setData(StandardBookDataKeys.PAGE_COUNT, page);
+                  }
+                });
+          }
+        }
     );
   }
 
-  private void addLanguage(Document document, Book book) {
+  private void addLanguage(Document document, final Book book) {
     String languagePrefix = language.translate("language_prefix");
     Pattern extractorPattern = Pattern.compile(".*" + languagePrefix + ".*:\\s*(.+)\\s*");
 
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> book.setData(StandardBookDataKeys.LANGUAGE, matcher.group(1))
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            book.setData(StandardBookDataKeys.LANGUAGE, matcher.group(1));
+          }
+        }
     );
   }
 
-  private void addPublisher(Document document, Book book) {
+  private void addPublisher(Document document, final Book book) {
     String publisherPrefix = language.translate("publisher_prefix");
     Pattern extractorPattern = Pattern.compile("\\s*" + publisherPrefix + ":\\s*([\\w\\s]+).*\\s*");
 
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> book.setData(StandardBookDataKeys.PUBLISHER, matcher.group(1))
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            book.setData(StandardBookDataKeys.PUBLISHER, matcher.group(1));
+          }
+        }
     );
   }
 
-  private void addRating(Document document, Book book) {
+  private void addRating(Document document, final Book book) {
     String ratingPrefix = language.translate("rating_prefix");
     Pattern extractorPattern = Pattern.compile("\\s*" + ratingPrefix + ":\\s*([\\d.]+).*\\s*");
 
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> NumberUtil.parseDouble(matcher.group(1)).ifPresent(value ->
-            book.setData(StandardBookDataKeys.RATING, value / 5.0)
-        )
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            NumberUtil.parseDouble(matcher.group(1)).ifPresent(new Consumer<Double>() {
+              @Override
+              public void accept(Double value) {
+                book.setData(StandardBookDataKeys.RATING, value / 5.0);
+              }
+            });
+          }
+        }
     );
   }
 
-  private void addIsbn(Document document, Book book) {
+  private void addIsbn(Document document, final Book book) {
     String isbnPrefix = language.translate("isbn_prefix");
     Pattern extractorPattern = Pattern.compile("\\s*" + isbnPrefix + ":\\s*([\\d-]+).*\\s*");
 
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> isbnConverter.fromString(matcher.group(1))
-            .ifPresent(isbn -> book.setData(StandardBookDataKeys.ISBN, isbn))
-    );
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            isbnConverter.fromString(matcher.group(1))
+                .ifPresent(new Consumer<Isbn>() {
+                  @Override
+                  public void accept(Isbn isbn) {
+                    book.setData(StandardBookDataKeys.ISBN, isbn);
+                  }
+                });
+          }
+        });
   }
 
-  private void addCoverType(Document document, Book book) {
+  private void addCoverType(Document document, final Book book) {
     String pageCountSuffix = language.translate("page_count_suffix");
     Pattern extractorPattern = Pattern.compile("\\s*(.+):\\s*\\d+\\s*" + pageCountSuffix + ".*");
 
     applyToProductInformation(
         document,
         extractorPattern,
-        matcher -> book.setData(StandardBookDataKeys.COVER_TYPE, matcher.group(1))
+        new Consumer<Matcher>() {
+          @Override
+          public void accept(Matcher matcher) {
+            book.setData(StandardBookDataKeys.COVER_TYPE, matcher.group(1));
+          }
+        }
     );
   }
 
@@ -236,36 +285,48 @@ class DetailPageScraper {
     );
   }
 
-  private void addPrice(Document document, Book book) {
+  private void addPrice(Document document, final Book book) {
     Element formatContainer = document.getElementById("tmmSwatches");
     Elements ul = formatContainer.getElementsByTag("ul");
     if (ul.isEmpty()) {
       return;
     }
-    Pattern extractPricePattern = Pattern.compile("[^\\d]*(\\d.+)");
+    final Pattern extractPricePattern = Pattern.compile("[^\\d]*(\\d.+)");
 
-    ul.get(0).children().stream()
-        .filter(element -> element.hasClass("selected"))
-        .map(element -> element.getElementsByClass("a-button-text"))
-        .filter(elements -> !elements.isEmpty())
-        .flatMap(Collection::stream)
-        .forEach(element -> getFirst(element.getElementsByClass("a-color-price"))
-            .ifPresent(priceElement -> {
+    for (Element child : ul.get(0).children()) {
+      if (!child.hasClass("selected")) {
+        continue;
+      }
+      Elements aButtonTexts = child.getElementsByClass("a-button-text");
+      if (aButtonTexts.isEmpty()) {
+        continue;
+      }
+      for (Element element : aButtonTexts) {
+        getFirst(element.getElementsByClass("a-color-price"))
+            .ifPresent(new Consumer<Element>() {
+              @Override
+              public void accept(Element priceElement) {
+                String text = priceElement.text().trim();
+                Matcher matcher = extractPricePattern.matcher(text);
+                if (matcher.find()) {
+                  text = matcher.group(1);
 
-              String text = priceElement.text().trim();
-              Matcher matcher = extractPricePattern.matcher(text);
-              if (matcher.find()) {
-                text = matcher.group(1);
-
-                NumberUtil.parseDouble(text, locale)
-                    .ifPresent(value -> book.setData(StandardBookDataKeys.PRICE, value));
+                  NumberUtil.parseDouble(text, locale)
+                      .ifPresent(new Consumer<Double>() {
+                        @Override
+                        public void accept(Double value) {
+                          book.setData(StandardBookDataKeys.PRICE, value);
+                        }
+                      });
+                }
               }
-            })
-        );
+            });
+      }
+    }
   }
 
   private Document selectRightEdition(Document document, String preferred) {
-    Set<String> acceptedEditions = new HashSet<>(
+    final Set<String> acceptedEditions = new HashSet<>(
         Arrays.asList(language.translate("good_editions")
             .split("\\|"))
     );
@@ -276,22 +337,25 @@ class DetailPageScraper {
       return document;
     }
 
-    AtomicReference<String> thisEdition = new AtomicReference<>("");
-    Map<String, String> goodUrls = new HashMap<>();
+    final AtomicReference<String> thisEdition = new AtomicReference<>("");
+    final Map<String, String> goodUrls = new HashMap<>();
 
-    for (Element element : ul.get(0).children()) {
+    for (final Element element : ul.get(0).children()) {
       Elements texts = element.getElementsByClass("a-button-text");
       getFirst(texts)
-          .ifPresent(link -> {
-            String url = link.absUrl("href");
+          .ifPresent(new Consumer<Element>() {
+            @Override
+            public void accept(Element link) {
+              String url = link.absUrl("href");
 
-            String edition = getSwatchEdition(link);
-            if (element.hasClass("selected")) {
-              thisEdition.set(edition);
-            }
+              String edition = getSwatchEdition(link);
+              if (element.hasClass("selected")) {
+                thisEdition.set(edition);
+              }
 
-            if (acceptedEditions.contains(edition)) {
-              goodUrls.put(edition, url);
+              if (acceptedEditions.contains(edition)) {
+                goodUrls.put(edition, url);
+              }
             }
           });
     }
@@ -324,27 +388,37 @@ class DetailPageScraper {
     return JsoupUtil.toStringRespectLinebreak(element).split("\n")[0].trim();
   }
 
-  private void applyToProductInformation(Document document, Pattern extractorPattern,
-      Consumer<Matcher> action) {
-    getProductInformation(document).ifPresent(information -> information.getElementsByTag("ul")
-        .stream()
-        .limit(1)
-        .flatMap(element -> element.children().stream())
-        .forEach(r -> {
-          Matcher matcher = extractorPattern.matcher(r.text());
-          if (matcher.find()) {
-            action.accept(matcher);
-          }
-        })
-    );
+  private void applyToProductInformation(Document document, final Pattern extractorPattern,
+      final Consumer<Matcher> action) {
+    getProductInformation(document)
+        .ifPresent(new Consumer<Element>() {
+                     @Override
+                     public void accept(Element information) {
+                       ListIterator<Element> ul = information.getElementsByTag("ul").listIterator();
+                       if (!ul.hasNext()) {
+                         return;
+                       }
+                       for (Element r : ul.next().children()) {
+                         Matcher matcher = extractorPattern.matcher(r.text());
+                         if (matcher.find()) {
+                           action.accept(matcher);
+                         }
+                       }
+                     }
+                   }
+        );
   }
 
   private Optional<Element> getProductInformation(Document document) {
     String productInformation = language.translate("product_information");
 
-    return document.getElementsByTag("h2").stream()
-        .filter(element -> element.text().contains(productInformation))
-        .findFirst()
-        .map(Element::nextElementSibling);
+    for (Element element : document.getElementsByTag("h2")) {
+      if (!element.text().contains(productInformation)) {
+        continue;
+      }
+      return Optional.ofNullable(element.nextElementSibling());
+    }
+
+    return Optional.empty();
   }
 }

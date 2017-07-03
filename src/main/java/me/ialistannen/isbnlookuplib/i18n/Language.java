@@ -1,7 +1,8 @@
 package me.ialistannen.isbnlookuplib.i18n;
 
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -13,9 +14,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class Language {
 
-  private LoadingCache<String, MessageFormat> formatCache = Caffeine.newBuilder()
+  private LoadingCache<String, MessageFormat> formatCache = CacheBuilder.newBuilder()
       .expireAfterAccess(5, TimeUnit.MINUTES) // // TODO: 26.06.17 Why do I even use a cache?
-      .build(MessageFormat::new);
+      .build(new CacheLoader<String, MessageFormat>() {
+        @Override
+        public MessageFormat load(String key) throws Exception {
+          return new MessageFormat(key);
+        }
+      });
 
   private ResourceBundle bundle;
 
@@ -46,7 +52,7 @@ public class Language {
   public String translate(String key, Object... formattingObjects) {
     String value = getValue(key);
 
-    MessageFormat messageFormat = formatCache.get(value);
+    MessageFormat messageFormat = formatCache.getUnchecked(value);
     if (messageFormat == null) {
       return "An error occurred while loading key '" + key + "'";
     }

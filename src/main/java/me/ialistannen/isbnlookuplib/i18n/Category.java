@@ -3,8 +3,8 @@ package me.ialistannen.isbnlookuplib.i18n;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ResourceBundle.Control;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * A category of language files.

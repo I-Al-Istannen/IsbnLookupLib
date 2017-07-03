@@ -1,10 +1,10 @@
 package me.ialistannen.isbnlookuplib.lookup.providers.amazon;
 
 import java.util.Locale;
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.i18n.DefaultCategories;
 import me.ialistannen.isbnlookuplib.i18n.Language;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
+import me.ialistannen.isbnlookuplib.util.Optional;
 import me.ialistannen.isbnlookuplib.util.WebsiteFetcher;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;

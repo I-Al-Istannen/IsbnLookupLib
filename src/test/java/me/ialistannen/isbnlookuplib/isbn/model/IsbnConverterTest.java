@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnConverter;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
+import me.ialistannen.isbnlookuplib.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,9 +45,8 @@ class IsbnConverterTest {
   }
 
   private IsbnType getIsbnType(String isbnString) {
-    return isbnConverter.fromString(isbnString)
-        .map(Isbn::getType)
-        .orElse(null);
+    Optional<Isbn> isbnOptional = isbnConverter.fromString(isbnString);
+    return isbnOptional.isPresent() ? isbnOptional.get().getType() : null;
   }
 
 }

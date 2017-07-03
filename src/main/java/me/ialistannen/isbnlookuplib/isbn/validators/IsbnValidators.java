@@ -2,8 +2,8 @@ package me.ialistannen.isbnlookuplib.isbn.validators;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * A collection of {@link IsbnValidator} for different {@link IsbnType}s.

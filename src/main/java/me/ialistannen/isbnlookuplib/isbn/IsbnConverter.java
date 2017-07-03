@@ -1,10 +1,10 @@
 package me.ialistannen.isbnlookuplib.isbn;
 
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.isbn.factories.IsbnFactories;
 import me.ialistannen.isbnlookuplib.isbn.factories.IsbnFactory;
 import me.ialistannen.isbnlookuplib.isbn.util.IsbnUtil;
 import me.ialistannen.isbnlookuplib.isbn.validators.IsbnValidators;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * A class to convert a String ISBN to an {@link Isbn}.

@@ -1,10 +1,10 @@
 package me.ialistannen.isbnlookuplib.isbn.factories;
 
-import java.util.Optional;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
 import me.ialistannen.isbnlookuplib.isbn.IsbnType;
 import me.ialistannen.isbnlookuplib.isbn.util.IsbnUtil;
 import me.ialistannen.isbnlookuplib.isbn.validators.Isbn10Validator;
+import me.ialistannen.isbnlookuplib.util.Optional;
 
 /**
  * An {@link IsbnFactory} for {@link IsbnType#ISBN_10}
