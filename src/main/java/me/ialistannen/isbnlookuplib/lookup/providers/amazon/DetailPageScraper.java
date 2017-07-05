@@ -228,6 +228,7 @@ class DetailPageScraper {
         new Consumer<Matcher>() {
           @Override
           public void accept(Matcher matcher) {
+            book.setData(StandardBookDataKeys.ISBN_STRING, matcher.group(1));
             isbnConverter.fromString(matcher.group(1))
                 .ifPresent(new Consumer<Isbn>() {
                   @Override

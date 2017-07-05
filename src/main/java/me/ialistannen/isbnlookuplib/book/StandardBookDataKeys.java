@@ -12,7 +12,11 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   ISBN,
   /**
-   * A {@link String}
+   * A String
+   */
+  ISBN_STRING,
+  /**
+   * A String
    */
   TITLE,
   /**
@@ -24,7 +28,7 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   PAGE_COUNT,
   /**
-   * A {@link String}
+   * A String
    */
   DESCRIPTION,
   /**
