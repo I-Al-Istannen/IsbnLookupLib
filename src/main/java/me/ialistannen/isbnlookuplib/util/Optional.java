@@ -45,7 +45,9 @@ public class Optional<T> {
    * @param action The action to apply to this value
    */
   public void ifPresent(Consumer<T> action) {
-    action.accept(get());
+    if (isPresent()) {
+      action.accept(get());
+    }
   }
 
   /**

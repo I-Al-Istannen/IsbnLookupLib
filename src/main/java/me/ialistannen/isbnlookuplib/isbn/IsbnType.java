@@ -7,7 +7,7 @@ public enum IsbnType {
   ISBN_10(10),
   ISBN_13(13);
 
-  private int digitCount;
+  private final int digitCount;
 
   IsbnType(int digitCount) {
     this.digitCount = digitCount;

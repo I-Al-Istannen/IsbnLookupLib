@@ -6,7 +6,7 @@ package me.ialistannen.isbnlookuplib.i18n;
 public enum DefaultCategories {
   AMAZON_SCRAPER("i18n.amazon_scraper.Messages");
 
-  private Category category;
+  private final Category category;
 
   DefaultCategories(String category) {
     this.category = new Category(category);
