@@ -8,14 +8,6 @@ import me.ialistannen.isbnlookuplib.isbn.Isbn;
  */
 public enum StandardBookDataKeys implements BookDataKey {
   /**
-   * A {@link Isbn}
-   */
-  ISBN,
-  /**
-   * A String
-   */
-  ISBN_STRING,
-  /**
    * A String
    */
   TITLE,
@@ -23,22 +15,6 @@ public enum StandardBookDataKeys implements BookDataKey {
    * Data about the Authors. A {@link List} of {@code Pair<String, String>}'s
    */
   AUTHORS,
-  /**
-   * An int
-   */
-  PAGE_COUNT,
-  /**
-   * A String
-   */
-  DESCRIPTION,
-  /**
-   * A double (Yes, not accurate...)
-   */
-  PRICE,
-  /**
-   * A String
-   */
-  LANGUAGE,
   /**
    * A String
    */
@@ -48,7 +24,36 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   COVER_TYPE,
   /**
+   * A String
+   */
+  DESCRIPTION,
+  /**
+   * An int
+   */
+  PAGE_COUNT,
+  /**
+   * A String
+   */
+  LANGUAGE,
+  /**
+   * A String
+   */
+  ISBN_STRING,
+  /**
+   * A {@link Isbn}
+   */
+  ISBN,
+  /**
+   * A double (Yes, not accurate...)
+   */
+  PRICE,
+  /**
    * A double (System depends on platform, this is normalized to percent out of one hundred)
    */
-  RATING
+  RATING;
+
+  @Override
+  public int displayPriority() {
+    return ordinal();
+  }
 }
