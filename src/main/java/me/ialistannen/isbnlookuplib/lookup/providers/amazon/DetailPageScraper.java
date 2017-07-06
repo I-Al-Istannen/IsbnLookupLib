@@ -14,8 +14,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import me.ialistannen.isbnlookuplib.book.AbstractBookDataKey;
 import me.ialistannen.isbnlookuplib.book.Book;
-import me.ialistannen.isbnlookuplib.book.BookDataKey;
 import me.ialistannen.isbnlookuplib.book.StandardBookDataKeys;
 import me.ialistannen.isbnlookuplib.i18n.DefaultCategories;
 import me.ialistannen.isbnlookuplib.i18n.Language;
@@ -96,7 +96,7 @@ class DetailPageScraper {
     addDescription(document, book);
     addPrice(document, book);
 
-    book.setData(new BookDataKey() {
+    book.setData(new AbstractBookDataKey() {
       @Override
       public String name() {
         return "URL";
