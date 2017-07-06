@@ -8,6 +8,6 @@ public abstract class AbstractBookDataKey implements BookDataKey {
 
   @Override
   public int displayPriority() {
-    return Integer.MIN_VALUE;
+    return Integer.MAX_VALUE;
   }
 }
