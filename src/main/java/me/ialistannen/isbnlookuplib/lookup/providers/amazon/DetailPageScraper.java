@@ -26,6 +26,7 @@ import me.ialistannen.isbnlookuplib.util.JsoupUtil;
 import me.ialistannen.isbnlookuplib.util.NumberUtil;
 import me.ialistannen.isbnlookuplib.util.Optional;
 import me.ialistannen.isbnlookuplib.util.Pair;
+import me.ialistannen.isbnlookuplib.util.Price;
 import me.ialistannen.isbnlookuplib.util.WebsiteFetcher;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -292,7 +293,7 @@ class DetailPageScraper {
     if (ul.isEmpty()) {
       return;
     }
-    final Pattern extractPricePattern = Pattern.compile("[^\\d]*(\\d.+)");
+    final Pattern extractPricePattern = Pattern.compile("([^\\d\\n]*)(\\d.+)");
 
     for (Element child : ul.get(0).children()) {
       if (!child.hasClass("selected")) {
@@ -310,13 +311,14 @@ class DetailPageScraper {
                 String text = priceElement.text().trim();
                 Matcher matcher = extractPricePattern.matcher(text);
                 if (matcher.find()) {
-                  text = matcher.group(1);
+                  text = matcher.group(2);
+                  final String currency = matcher.group(1).trim();
 
                   NumberUtil.parseDouble(text, locale)
                       .ifPresent(new Consumer<Double>() {
                         @Override
                         public void accept(Double value) {
-                          book.setData(StandardBookDataKeys.PRICE, value);
+                          book.setData(StandardBookDataKeys.PRICE, new Price(value, currency));
                         }
                       });
                 }

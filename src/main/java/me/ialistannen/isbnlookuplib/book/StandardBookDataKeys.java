@@ -2,6 +2,7 @@ package me.ialistannen.isbnlookuplib.book;
 
 import java.util.List;
 import me.ialistannen.isbnlookuplib.isbn.Isbn;
+import me.ialistannen.isbnlookuplib.util.Price;
 
 /**
  * The standard {@link BookDataKey}s.
@@ -44,7 +45,7 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   ISBN,
   /**
-   * A double (Yes, not accurate...)
+   * A {@link Price}
    */
   PRICE,
   /**
