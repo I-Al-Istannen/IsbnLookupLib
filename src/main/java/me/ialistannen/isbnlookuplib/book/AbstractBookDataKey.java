@@ -10,4 +10,9 @@ public abstract class AbstractBookDataKey implements BookDataKey {
   public int displayPriority() {
     return Integer.MAX_VALUE;
   }
+
+  @Override
+  public String toString() {
+    return name();
+  }
 }

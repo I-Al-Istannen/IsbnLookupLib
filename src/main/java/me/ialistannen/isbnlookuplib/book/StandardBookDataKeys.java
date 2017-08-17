@@ -49,7 +49,7 @@ public enum StandardBookDataKeys implements BookDataKey {
    */
   PRICE,
   /**
-   * A double (System depends on platform, this is normalized to percent out of one hundred)
+   * A double (System depends on platform, this is normalized to percent)
    */
   RATING;
 
