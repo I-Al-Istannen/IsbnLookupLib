@@ -114,10 +114,11 @@ public class Optional<T> {
 
   @Override
   public String toString() {
-    return "Optional{"
-        + "value=" + value
-        + ", present=" + isPresent()
-        + ", =" + get()
-        + '}';
+    if (!isPresent()) {
+      return "Optional.empty";
+    }
+    return "Optional["
+        + value
+        + ']';
   }
 }
