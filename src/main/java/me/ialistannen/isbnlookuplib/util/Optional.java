@@ -51,6 +51,18 @@ public class Optional<T> {
   }
 
   /**
+   * @param value The value to return if {@link #isPresent()} is false
+   * @return The value of this optional or the passed value
+   */
+  @SuppressWarnings("unused")
+  public T orElse(T value) {
+    if (isPresent()) {
+      return get();
+    }
+    return value;
+  }
+
+  /**
    * @param <T> The type of the {@link Optional}
    * @return An empty {@link Optional}
    */
@@ -81,5 +93,31 @@ public class Optional<T> {
    */
   public static <T> Optional<T> ofNullable(T value) {
     return value == null ? Optional.<T>empty() : new Optional<>(value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Optional<?> optional = (Optional<?>) o;
+    return Objects.equals(value, optional.value);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
+  }
+
+  @Override
+  public String toString() {
+    return "Optional{"
+        + "value=" + value
+        + ", present=" + isPresent()
+        + ", =" + get()
+        + '}';
   }
 }
