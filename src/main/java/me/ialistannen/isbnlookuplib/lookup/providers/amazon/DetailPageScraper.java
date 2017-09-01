@@ -116,6 +116,9 @@ class DetailPageScraper {
       String contribution = getContribution(author);
       String name = getAuthorName(author);
 
+      if (contribution.isEmpty()) {
+        continue;
+      }
       authorData.add(new Pair<>(name, contribution));
     }
 
