@@ -51,7 +51,11 @@ public enum StandardBookDataKeys implements BookDataKey {
   /**
    * A double (System depends on platform, this is normalized to percent)
    */
-  RATING;
+  RATING,
+  /**
+   * A link to the cover image.
+   */
+  COVER_IMAGE_URL;
 
   @Override
   public int displayPriority() {

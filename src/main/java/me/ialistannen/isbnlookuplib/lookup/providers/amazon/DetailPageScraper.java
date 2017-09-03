@@ -96,6 +96,7 @@ class DetailPageScraper {
     addTitle(document, book);
     addDescription(document, book);
     addPrice(document, book);
+    addCoverImage(document, book);
 
     book.setData(new AbstractBookDataKey() {
       @Override
@@ -329,6 +330,30 @@ class DetailPageScraper {
             });
       }
     }
+  }
+
+  private void addCoverImage(Document document, final Book book) {
+    Element image = document.getElementById("imgBlkFront");
+    String srcUrl = image.attr("data-a-dynamic-image");
+
+    Pattern urlPattern = Pattern.compile("(https.+?)\"");
+    Matcher matcher = urlPattern.matcher(srcUrl);
+    if (!matcher.find()) {
+      System.err.println(
+          "Encountered invalid image for book: " + document.location() + ": '" + srcUrl + "'"
+      );
+      return;
+    }
+    srcUrl = matcher.group(1);
+
+    if (!srcUrl.startsWith("http")) {
+      System.err.println(
+          "Encountered invalid image for book: " + document.location() + ": '" + srcUrl + "'"
+      );
+      return;
+    }
+
+    book.setData(StandardBookDataKeys.COVER_IMAGE_URL, srcUrl);
   }
 
   private Document selectRightEdition(Document document, String preferred) {
