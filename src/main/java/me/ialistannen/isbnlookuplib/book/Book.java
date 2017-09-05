@@ -23,6 +23,13 @@ public class Book {
   }
 
   /**
+   * @param key The key to remove
+   */
+  public void removeData(BookDataKey key) {
+    dataMap.remove(key);
+  }
+
+  /**
    * The data in this key.
    *
    * <em>Will cast to what you assign it to. Beware of {@link ClassCastException}s.</em>
