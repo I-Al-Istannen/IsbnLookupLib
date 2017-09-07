@@ -188,7 +188,11 @@ class DetailPageScraper {
 
   private void addPublisher(Document document, final Book book) {
     String publisherPrefix = language.translate("publisher_prefix");
-    Pattern extractorPattern = Pattern.compile("\\s*" + publisherPrefix + ":\\s*([\\w\\s]+).*\\s*");
+    // The regex:
+    // Until the ":" it just matches the line containing the publisher
+    // Then it matches everything until ";" or "(" as that seem to be the most common delimiters
+    // Then it matches whatever follows to ensure it matches the whole line
+    Pattern extractorPattern = Pattern.compile("\\s*" + publisherPrefix + ":\\s*([^;(]+).*");
 
     applyToProductInformation(
         document,
@@ -204,7 +208,7 @@ class DetailPageScraper {
 
   private void addRating(Document document, final Book book) {
     String ratingPrefix = language.translate("rating_prefix");
-    Pattern extractorPattern = Pattern.compile("\\s*" + ratingPrefix + ":\\s*([\\d.]+).*\\s*");
+    Pattern extractorPattern = Pattern.compile("\\s*" + ratingPrefix + ":\\s*([\\d.]+).*");
 
     applyToProductInformation(
         document,
