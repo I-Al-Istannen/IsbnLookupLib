@@ -1,6 +1,7 @@
 package me.ialistannen.isbnlookuplib.isbn;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * An ISBN number.
@@ -44,6 +45,24 @@ public class Isbn {
    */
   public IsbnType getType() {
     return type;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    Isbn isbn = (Isbn) o;
+    return Arrays.equals(getDigits(), isbn.getDigits()) &&
+        getType() == isbn.getType();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getDigits(), getType());
   }
 
   @Override
