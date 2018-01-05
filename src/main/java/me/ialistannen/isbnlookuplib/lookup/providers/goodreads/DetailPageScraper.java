@@ -83,8 +83,10 @@ class DetailPageScraper {
     return document.getElementsByAttributeValue("itemprop", "inLanguage").text();
   }
 
-  private String parseRating(Document document) {
-    return document.getElementsByAttributeValue("itemprop", "ratingValue").text();
+  private double parseRating(Document document) {
+    return Double.parseDouble(
+        document.getElementsByAttributeValue("itemprop", "ratingValue").text()
+    ) / 5.0;
   }
 
   private List<String> parseGenre(Document document) {
