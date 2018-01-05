@@ -55,7 +55,11 @@ public enum StandardBookDataKeys implements BookDataKey {
   /**
    * A link to the cover image.
    */
-  COVER_IMAGE_URL;
+  COVER_IMAGE_URL,
+  /**
+   * A List of strings.
+   */
+  GENRE;
 
   @Override
   public int displayPriority() {

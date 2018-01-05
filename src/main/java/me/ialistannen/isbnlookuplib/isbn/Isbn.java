@@ -62,7 +62,7 @@ public class Isbn {
 
   @Override
   public int hashCode() {
-    return Objects.hash(getDigits(), getType());
+    return Objects.hash(Arrays.hashCode(getDigits()), getType());
   }
 
   @Override

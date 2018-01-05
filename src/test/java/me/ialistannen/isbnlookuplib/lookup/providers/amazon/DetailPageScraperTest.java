@@ -31,7 +31,7 @@ public class DetailPageScraperTest {
         book.getData(StandardBookDataKeys.AUTHORS)
     );
     assertEquals(
-        "https://images-na.ssl-images-amazon.com/images/I/51zQm7Uz43L._SX358_BO1,204,203,200_.jpg",
+        "https://images-na.ssl-images-amazon.com/images/I/514JE1vo%2BFL._SY344_BO1,204,203,200_.jpg",
         book.getData(StandardBookDataKeys.COVER_IMAGE_URL)
     );
   }
@@ -50,7 +50,7 @@ public class DetailPageScraperTest {
         book.getData(StandardBookDataKeys.AUTHORS)
     );
     assertEquals(
-        "https://images-na.ssl-images-amazon.com/images/I/51BxlBTSLyL._SX304_BO1,204,203,200_.jpg",
+        "https://images-na.ssl-images-amazon.com/images/I/51KIDgdSDfL._SY344_BO1,204,203,200_.jpg",
         book.getData(StandardBookDataKeys.COVER_IMAGE_URL)
     );
   }
@@ -72,7 +72,7 @@ public class DetailPageScraperTest {
         book.getData(StandardBookDataKeys.AUTHORS)
     );
     assertEquals(
-        "https://images-na.ssl-images-amazon.com/images/I/51zQm7Uz43L._SX358_BO1,204,203,200_.jpg",
+        "https://images-na.ssl-images-amazon.com/images/I/514JE1vo%2BFL._SY344_BO1,204,203,200_.jpg",
         book.getData(StandardBookDataKeys.COVER_IMAGE_URL)
     );
   }
