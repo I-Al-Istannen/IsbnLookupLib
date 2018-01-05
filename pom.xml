@@ -8,6 +8,10 @@
   <artifactId>IsbnLookupLib</artifactId>
   <version>1.0-SNAPSHOT</version>
 
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
   <build>
     <defaultGoal>clean package</defaultGoal>
 
@@ -98,7 +102,8 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>21.0</version>
+      <!--20 is the last java 7 one-->
+      <version>20.0</version>
     </dependency>
   </dependencies>
 </project>
